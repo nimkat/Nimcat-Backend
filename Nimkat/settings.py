@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 import django_heroku
 
 
@@ -106,10 +106,16 @@ WSGI_APPLICATION = 'Nimkat.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": os.getenv("ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.getenv("NAME", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.getenv("USER"),
+        "PASSWORD": os.getenv("PASSWORD"),
+        "HOST": os.getenv("HOST"),
+        "PORT": os.getenv("PORT"),
+        "TEST": {"NAME": "dbtest"},
     }
 }
 
