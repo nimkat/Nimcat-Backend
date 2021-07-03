@@ -1,0 +1,3 @@
+## Nimkat Backend
+
+GraphQl api

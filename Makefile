@@ -17,21 +17,20 @@ install: venv ## Make venv and install requirements
 
 freeze: ## Pin current dependencies
 	$(BIN)/pip freeze > requirements.txt
-	$(BIN)/pip freeze > tripper/requirements.txt
 
 migrate: ## Make and run migrations
-	cd tripper && ../$(PYTHON) manage.py makemigrations
-	cd tripper && ../$(PYTHON) manage.py migrate
+	$(PYTHON) manage.py makemigrations
+	$(PYTHON) manage.py migrate
 
 del_migrations: ## delete all migration files
-	cd tripper && find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
-	cd tripper && find . -path "tripper/*/migrations/*.pyc"  -delete
+	find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+	find . -path "tripper/*/migrations/*.pyc"  -delete
 
 erd: ## Make erd jpg in doc folder and dot file to edit in https://dreampuf.github.io/GraphvizOnline and 
 	pip install django-extensions pygraphviz 
-	python tripper/manage.py graph_models -a -g -o docs/ERD.png  
-	python tripper/manage.py graph_models -a > docs/erd-dotfile.dot
-	python tripper/manage.py show_urls > docs/urls.txt 
+	python manage.py graph_models -a -g -o docs/ERD.png  
+	python manage.py graph_models -a > docs/erd-dotfile.dot
+	python manage.py show_urls > docs/urls.txt 
 	pip uninstall django-extensions 
 	pip uninstall pygraphviz 
 
@@ -44,22 +43,22 @@ db-shell: ## Access the Postgres Docker database interactively with psql. Pass i
 
 .PHONY: test
 test: ## Run tests
-	cd tripper && ../$(PYTHON) manage.py test application --verbosity=0 --parallel --failfast
+	$(PYTHON) manage.py test application --verbosity=0 --parallel --failfast
 
 run-docker:
-	cd tripper && docker-compose up
+	docker-compose up
 
 start-docker:
-	cd tripper && docker-compose run web python manage.py makemigrations 
-	cd tripper && docker-compose run web python manage.py migrate  
-	cd tripper && docker-compose up --build
+	cdocker-compose run web python manage.py makemigrations 
+	docker-compose run web python manage.py migrate  
+	docker-compose up --build
 
 add-env:
-	cd tripper && cat .env | export
+	cat .env | export
 
 .PHONY: run
 run: ## Run the Django server
-	cd tripper && ../$(PYTHON) manage.py runserver
+	$(PYTHON) manage.py runserver
 
 start: install migrate run ## Install requirements, apply migrations, then start development server
 
