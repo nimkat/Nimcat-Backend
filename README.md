@@ -1,3 +1,3 @@
 ## Nimkat Backend
 
-GraphQl api
+ٔNimkat academy GraphQl api
