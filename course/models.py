@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+LANGUAGE = [
+    ('fa', 'فارسی'),
+    ('en', 'English'),
+]
+
 
 class CategoryModel(models.Model):
 
@@ -19,6 +24,24 @@ class CategoryModel(models.Model):
         return str(self.title)
 
 
+class LessonModel(models.Model):
+    title = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # Todo: modify when update field.
+    modify_at = models.DateTimeField(auto_now=True)
+    short_description = models.TextField(
+        blank=True, null=True, max_length=1000)
+
+
+class SectionModel(models.Model):
+    title = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    short_description = models.TextField(
+        blank=True, null=True, max_length=1000)
+    lessons = models.ManyToManyField(
+        to=LessonModel, related_name="section_of_lesson")
+
+
 class CourseModel(models.Model):
 
     class Meta:
@@ -34,6 +57,14 @@ class CourseModel(models.Model):
     image = models.ImageField(
         upload_to="course/", blank=True, null=True
     )
+    language = models.CharField(
+        choices=LANGUAGE, max_length=2, blank=True, null=True)
+    price = models.BigIntegerField(null=True, blank=True)
+    discount_price = models.BigIntegerField(
+        null=True, blank=True
+    )
+    sections = models.ManyToManyField(
+        to=SectionModel, related_name="course_of_section")
 
     def __str__(self):
         return str(self.title)

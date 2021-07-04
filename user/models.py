@@ -91,3 +91,20 @@ def create_profile_for_user(sender, instance, **kwargs):
 
 
 post_save.connect(receiver=create_profile_for_user, sender=User)
+
+
+class FavouriteCourseModel(models.Model):
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE)
+    course = models.ForeignKey(
+        "course.CourseModel", on_delete=models.CASCADE)
+
+
+class BoughtCoursesModel(models.Model):
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE)
+    course = models.ForeignKey(
+        "course.CourseModel", on_delete=models.CASCADE)
+    payment_status = models.BooleanField(default=False)
+    ref_id = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
