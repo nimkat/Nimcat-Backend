@@ -7,7 +7,7 @@ LANGUAGE = [
 ]
 
 
-class CategoryModel(models.Model):
+class CourseCategoryModel(models.Model):
 
     class Meta:
         verbose_name = 'موضوع'
@@ -24,22 +24,24 @@ class CategoryModel(models.Model):
         return str(self.title)
 
 
-class LessonModel(models.Model):
+class CourseLessonModel(models.Model):
     title = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     # Todo: modify when update field.
     modify_at = models.DateTimeField(auto_now=True)
     short_description = models.TextField(
         blank=True, null=True, max_length=1000)
+    published = models.BooleanField(default=True)
 
 
-class SectionModel(models.Model):
+class CourseSectionModel(models.Model):
     title = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     short_description = models.TextField(
         blank=True, null=True, max_length=1000)
     lessons = models.ManyToManyField(
-        to=LessonModel, related_name="section_of_lesson")
+        to=CourseLessonModel, related_name="section_of_lesson")
+    published = models.BooleanField(default=True)
 
 
 class CourseModel(models.Model):
@@ -53,7 +55,7 @@ class CourseModel(models.Model):
     short_description = models.TextField(
         blank=True, null=True, max_length=1000)
     category = models.ForeignKey(
-        to=CategoryModel, blank=True, null=True, on_delete=models.CASCADE)
+        to=CourseCategoryModel, blank=True, null=True, on_delete=models.CASCADE)
     image = models.ImageField(
         upload_to="course/", blank=True, null=True
     )
@@ -64,7 +66,8 @@ class CourseModel(models.Model):
         null=True, blank=True
     )
     sections = models.ManyToManyField(
-        to=SectionModel, related_name="course_of_section")
+        to=CourseSectionModel, related_name="course_of_section")
+    published = models.BooleanField(default=True)
 
     def __str__(self):
         return str(self.title)
@@ -84,6 +87,7 @@ class CourseReviewModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     likes_count = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
+    published = models.BooleanField(default=True)
 
     def get_total_likes(self):
         return self.review_likes.users.count()

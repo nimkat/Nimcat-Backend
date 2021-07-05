@@ -3,15 +3,7 @@ from graphene_django import DjangoObjectType
 from django.contrib.auth import get_user_model
 from graphene import relay
 
-from .models import AchievementModel, FollowingModel, ProfileModel
-
-
-class FollowingType(DjangoObjectType):
-    class Meta:
-        model = FollowingModel
-        filter_fields = "__all__"
-        interfaces = (relay.Node, )
-        fields = "__all__"
+from .models import AchievementModel, ProfileModel
 
 
 class UserType(DjangoObjectType):

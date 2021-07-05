@@ -15,7 +15,7 @@ class TeacherModel(models.Model):
         blank=True, null=True, max_length=1000)
     resume = models.JSONField(null=True, blank=True)
     categories = models.ManyToManyField(
-        to="course.CategoryModel", blank=True, related_name="teacher_in_category")
+        to="course.CourseCategoryModel", blank=True, related_name="teacher_in_category")
 
     def __str__(self):
         return str(self.name)

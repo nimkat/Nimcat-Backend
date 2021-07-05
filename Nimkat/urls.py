@@ -17,11 +17,20 @@ from django.contrib import admin
 from django.urls import path
 from graphene_django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
+from .views import PrivateGraphQLView
+from django.contrib.auth.views import LogoutView
+from graphene_file_upload.django import FileUploadGraphQLView
+from django.conf import settings
+from .views import DownloadGraphQlSchema
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("graphql", csrf_exempt(GraphQLView.as_view(graphiql=True))),
-
-
+    path('download_schema', csrf_exempt(DownloadGraphQlSchema.as_view())),
+    path('logout', LogoutView.as_view()),
+    path('api/', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=False)))
 ]
+
+if settings.DEBUG:
+    urlpatterns.append(path('graphql/', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=True))),
+                       )

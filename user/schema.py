@@ -8,7 +8,7 @@ from graphql_relay import from_global_id
 from .graphene_permissions.mixins import AuthUserMutation
 from .graphene_permissions.permissions import AllowAuthenticated
 from .inputs import ProfileInputType
-from .models import FollowingModel, ProfileModel
+from .models import ProfileModel
 from .types import (ProfileType,
                     ProfileConnection)
 
@@ -57,28 +57,28 @@ class UpdateProfile(relay.ClientIDMutation):
 # in kheili zibast
 
 
-class FollowOrUnfollow(AuthUserMutation, relay.ClientIDMutation):
-    permission_classes = (AllowAuthenticated,)
+# class FollowOrUnfollow(AuthUserMutation, relay.ClientIDMutation):
+#     permission_classes = (AllowAuthenticated,)
 
-    class Input:
-        followed_id = graphene.ID(required=True)
+#     class Input:
+#         followed_id = graphene.ID(required=True)
 
-    follow_status = graphene.Boolean()
+#     follow_status = graphene.Boolean()
 
-    @classmethod
-    def mutate_and_get_payload(cls, root, info, followed_id):
-        if cls.has_permission(root, info, input):
-            user = info.context.user
-            followed_id = from_global_id(followed_id)[1]
-            status = FollowingModel.follow_or_unfollow(
-                user=user, followed_id=followed_id)
-            return FollowOrUnfollow(follow_status=status)
-        return FollowOrUnfollow(follow_status=None)
+#     @classmethod
+#     def mutate_and_get_payload(cls, root, info, followed_id):
+#         if cls.has_permission(root, info, input):
+#             user = info.context.user
+#             followed_id = from_global_id(followed_id)[1]
+#             status = FollowingModel.follow_or_unfollow(
+#                 user=user, followed_id=followed_id)
+#             return FollowOrUnfollow(follow_status=status)
+#         return FollowOrUnfollow(follow_status=None)
 
 
 class Mutation(AuthMutation, graphene.ObjectType):
     update_profile = UpdateProfile.Field()
-    follow_or_unfollow = FollowOrUnfollow.Field()
+    # follow_or_unfollow = FollowOrUnfollow.Field()
     # social_auth = graphql_social_auth.relay.SocialAuth.Field()
 
 
