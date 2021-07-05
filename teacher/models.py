@@ -14,6 +14,7 @@ class TeacherModel(models.Model):
     short_description = models.TextField(
         blank=True, null=True, max_length=1000)
     resume = models.JSONField(null=True, blank=True)
+    video_id = models.CharField(max_length=100, blank=True)
     categories = models.ManyToManyField(
         to="course.CourseCategoryModel", blank=True, related_name="teacher_in_category")
 

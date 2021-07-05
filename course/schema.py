@@ -43,16 +43,16 @@ class Query(graphene.AbstractType):
     course_review = relay.Node.Field(CourseReviewType)
     all_course_review = DjangoFilterConnectionField(CourseReviewType)
 
-    def resolve_trip(self, info):
+    def resolve_course(self, info):
         return CourseModel.objects.filter(published=True)
 
-    def resolve_all_trip(root, info, **kwargs):
+    def resolve_all_courses(root, info, **kwargs):
         return CourseModel.objects.filter(published=True)
 
-    def resolve_all_trip_review(self, info):
+    def resolve_all_course_review(self, info):
         return CourseReviewModel.objects.all()
 
-    def resolve_categories(self, info):
+    def resolve_course_category(self, info):
         return CourseCategoryModel.objects.all()
 
     def resolve_my_courses(self, info):

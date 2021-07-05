@@ -32,6 +32,8 @@ class CourseLessonModel(models.Model):
     short_description = models.TextField(
         blank=True, null=True, max_length=1000)
     published = models.BooleanField(default=True)
+    video = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=100, blank=True)
 
 
 class CourseSectionModel(models.Model):
@@ -42,6 +44,8 @@ class CourseSectionModel(models.Model):
     lessons = models.ManyToManyField(
         to=CourseLessonModel, related_name="section_of_lesson")
     published = models.BooleanField(default=True)
+    video = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=100, blank=True)
 
 
 class CourseModel(models.Model):
@@ -66,8 +70,11 @@ class CourseModel(models.Model):
         null=True, blank=True
     )
     sections = models.ManyToManyField(
-        to=CourseSectionModel, related_name="course_of_section")
+        to=CourseSectionModel, related_name="course_of_section", blank=True)
     published = models.BooleanField(default=True)
+    slug = models.SlugField(max_length=100, blank=True)
+
+    video = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return str(self.title)

@@ -12,6 +12,8 @@ from .models import (
     CourseSectionModel,
 )
 
+from common.util.Video import get_secure_video_link
+
 
 class CourseType(DjangoObjectType):
 
@@ -25,6 +27,12 @@ class CourseType(DjangoObjectType):
         if self.image:
             self.image = info.context.build_absolute_uri(self.image.url)
         return self.image
+
+    def resolve_video(self, info):
+        """Resolve vodeo url sequre path"""
+        if self.video:
+            self.video = get_secure_video_link(info.context, self.video)
+        return self.video
 
     class Meta:
         model = CourseModel
