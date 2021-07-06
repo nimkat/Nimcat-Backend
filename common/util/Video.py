@@ -1,3 +1,4 @@
+import socket
 import requests
 
 
@@ -7,6 +8,24 @@ def get_client_ip(request):
         ip = x_forwarded_for.split(',')[0]
     else:
         ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
+# for get real ip address from arvan cloud service
+# https://help.arvancloud.com/hc/fa/articles/360034320513?source=search
+def get_real_ip_addr(request):
+
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+
+    remote_addr = request.META.get('REMOTE_ADDR')
+
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    elif remote_addr:
+        ip = remote_addr
+    else:
+        ip = request.META.get('AR_REAL_IP')
+
     return ip
 
 
