@@ -35,5 +35,5 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns.append(path('graphql/', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=True))),
+    urlpatterns.append(path('graphql/', FileUploadGraphQLView.as_view(graphiql=True)),
                        )
