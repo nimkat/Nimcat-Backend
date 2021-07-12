@@ -59,21 +59,21 @@ class UpdateProfile(relay.ClientIDMutation):
         return UpdateProfile(profile=profile)
 
 
-class GetPaymentLink(relay.ClientIDMutation):
-    class Input:
-        course_id = graphene.ID(required=True)
+# class GetPaymentLink(relay.ClientIDMutation):
+#     class Input:
+#         course_id = graphene.ID(required=True)
 
-    payment_url = graphene.String()
+#     payment_url = graphene.String()
 
-    @classmethod
-    def mutate_and_get_payload(cls, root, info, course_id):
-        user = info.context.user
-        course = CourseModel.objects.get(pk=from_global_id(course_id)[1])
-        price = course.price
-        if course.discount_price is not None:
-            price = course.discount_price
-        payment_url = send_payment_request(amount=price)
-        return GetPaymentLink(payment_url=payment_url)
+#     @classmethod
+#     def mutate_and_get_payload(cls, root, info, course_id):
+#         user = info.context.user
+#         course = CourseModel.objects.get(pk=from_global_id(course_id)[1])
+#         price = course.price
+#         if course.discount_price is not None:
+#             price = course.discount_price
+#         payment_url = send_payment_request(amount=price)
+#         return GetPaymentLink(payment_url=payment_url)
 
 
 # class VerifyPayment(relay.ClientIDMutation):
