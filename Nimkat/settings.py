@@ -28,7 +28,7 @@ SECRET_KEY = 'dejm1_kfe!oz-5_^*229-ew*fa55cmc%yq(e4f)q%kgebxy2pw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'graphql_auth',
     'django_filters',
+    "corsheaders",
+
 
     'user',
     'teacher',
@@ -89,6 +91,9 @@ GRAPHENE = {
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 GRAPHQL_JWT = {
     "JWT_VERIFY_EXPIRATION": True,
