@@ -14,7 +14,7 @@ from .types import (ProfileType,
                     ProfileConnection)
 
 from course.types import CourseType
-from .payment import send_payment_request
+# from .payment import send_payment_request
 
 
 class AuthMutation(graphene.ObjectType):
