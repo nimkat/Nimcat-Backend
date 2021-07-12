@@ -22,7 +22,7 @@ from django.contrib.auth.views import LogoutView
 from graphene_file_upload.django import FileUploadGraphQLView
 from django.conf import settings
 from .views import DownloadGraphQlSchema
-from user.payment import verify_payment
+# from user.payment import verify_payment
 
 
 urlpatterns = [
@@ -30,7 +30,7 @@ urlpatterns = [
     path('download_schema', csrf_exempt(DownloadGraphQlSchema.as_view())),
     path('logout', LogoutView.as_view()),
     path('api/', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=False))),
-    path('verify_payment', verify_payment, name='verify_payment'),
+    # path('verify_payment', verify_payment, name='verify_payment'),
 
 ]
 
