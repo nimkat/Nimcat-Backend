@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'graphql_auth',
     'django_filters',
+    "corsheaders",
+
 
     'user',
     'teacher',
@@ -52,8 +54,6 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'user.User'
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 
 MIDDLEWARE = [
@@ -91,6 +91,9 @@ GRAPHENE = {
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+
 
 GRAPHQL_JWT = {
     "JWT_VERIFY_EXPIRATION": True,
