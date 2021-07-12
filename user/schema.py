@@ -1,3 +1,4 @@
+from course.models import CourseModel
 import graphene
 from django.contrib.auth import get_user_model
 from graphene import relay
@@ -8,9 +9,12 @@ from graphql_relay import from_global_id
 from .graphene_permissions.mixins import AuthUserMutation
 from .graphene_permissions.permissions import AllowAuthenticated
 from .inputs import ProfileInputType
-from .models import FollowingModel, ProfileModel
+from .models import ProfileModel
 from .types import (ProfileType,
                     ProfileConnection)
+
+from course.types import CourseType
+from .payment import send_payment_request
 
 
 class AuthMutation(graphene.ObjectType):
@@ -54,31 +58,38 @@ class UpdateProfile(relay.ClientIDMutation):
             user=user, defaults={**profile})
         return UpdateProfile(profile=profile)
 
-# in kheili zibast
 
-
-class FollowOrUnfollow(AuthUserMutation, relay.ClientIDMutation):
-    permission_classes = (AllowAuthenticated,)
-
+class GetPaymentLink(relay.ClientIDMutation):
     class Input:
-        followed_id = graphene.ID(required=True)
+        course_id = graphene.ID(required=True)
 
-    follow_status = graphene.Boolean()
+    payment_url = graphene.String()
 
     @classmethod
-    def mutate_and_get_payload(cls, root, info, followed_id):
-        if cls.has_permission(root, info, input):
-            user = info.context.user
-            followed_id = from_global_id(followed_id)[1]
-            status = FollowingModel.follow_or_unfollow(
-                user=user, followed_id=followed_id)
-            return FollowOrUnfollow(follow_status=status)
-        return FollowOrUnfollow(follow_status=None)
+    def mutate_and_get_payload(cls, root, info, course_id):
+        user = info.context.user
+        course = CourseModel.objects.get(pk=from_global_id(course_id)[1])
+        price = course.price
+        if course.discount_price is not None:
+            price = course.discount_price
+        payment_url = send_payment_request(amount=price)
+        return GetPaymentLink(payment_url=payment_url)
+
+
+# class VerifyPayment(relay.ClientIDMutation):
+#     class Input:
+#         ref_id = graphene.String()
+#         status = graphene.String()
+
+
+#     @classmethod
+#     def mutate_and_get_payload(cls, root, info):
+#         pass
 
 
 class Mutation(AuthMutation, graphene.ObjectType):
     update_profile = UpdateProfile.Field()
-    follow_or_unfollow = FollowOrUnfollow.Field()
+    buy_course = UpdateProfile.Field()
     # social_auth = graphql_social_auth.relay.SocialAuth.Field()
 
 

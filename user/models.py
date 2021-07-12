@@ -51,6 +51,11 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+
+    class Meta:
+        verbose_name = 'کاربر'
+        verbose_name_plural = 'کاربران'
+
     email = models.EmailField(_('email address'), unique=True)
     avatar = models.ImageField(blank=True, upload_to='profiles/avatar')
 
@@ -64,52 +69,20 @@ class User(AbstractUser):
 
 
 class ProfileModel(models.Model):
-    user = models.OneToOneField(to=User, on_delete=models.CASCADE, primary_key=True)
+
+    class Meta:
+        verbose_name = 'پروفایل'
+        verbose_name_plural = 'پروفایل‌ها'
+
+    user = models.OneToOneField(
+        to=User, on_delete=models.CASCADE, primary_key=True)
     about = models.TextField(blank=True, null=True, max_length=400)
-    trip_status = models.BooleanField(default=False, blank=True, null=True)
-    header = models.ImageField(blank=True, null=True, upload_to='profiles/header')
-    gender = models.CharField(choices=GENDER, max_length=2, blank=True, null=True)
-    followers_count = models.IntegerField(default=0)
-    followings_count = models.IntegerField(default=0)
+    gender = models.CharField(
+        choices=GENDER, max_length=2, blank=True, null=True)
     achievements = models.ManyToManyField(AchievementModel, blank=True)
 
     def __str__(self):
         return str(self.user)
-
-
-class FollowingModel(models.Model):
-    user = models.ForeignKey(User, related_name="user", on_delete=models.CASCADE)
-    followed = models.ForeignKey(User, related_name="followed", on_delete=models.CASCADE)
-    date_followed = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('user', 'followed')
-
-    def __str__(self):
-        return str(self.user) + " >> " + str(self.followed)
-
-    @staticmethod
-    def follow_or_unfollow(cls, user, followed_id):
-        """ follows user if not  followed and unfollow if followed. """
-        followed = get_user_model().objects.get(pk=followed_id)
-        follow = cls.objects.filter(user=user, followed=followed)
-        profile_user = ProfileModel.objects.get(user=user)
-        profile_followed = ProfileModel.objects.get(user=user)
-        if follow.exists():
-            follow.delete()
-            profile_user.followings_count -= 1
-            profile_user.save()
-            profile_followed.followers_count -= 1
-            profile_followed.save()
-            status = False
-        else:
-            cls.objects.create(user=user, followed=followed)
-            profile_user.followings_count += 1
-            profile_user.save()
-            profile_followed.followers_count += 1
-            profile_followed.save()
-            status = True
-        return status
 
 
 def create_profile_for_user(sender, instance, **kwargs):
@@ -118,3 +91,20 @@ def create_profile_for_user(sender, instance, **kwargs):
 
 
 post_save.connect(receiver=create_profile_for_user, sender=User)
+
+
+class FavouriteCourseModel(models.Model):
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE)
+    course = models.ForeignKey(
+        "course.CourseModel", on_delete=models.CASCADE)
+
+
+class BoughtCoursesModel(models.Model):
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE)
+    course = models.ForeignKey(
+        "course.CourseModel", on_delete=models.CASCADE)
+    payment_status = models.BooleanField(default=False)
+    ref_id = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
