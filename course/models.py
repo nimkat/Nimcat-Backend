@@ -54,6 +54,8 @@ class CourseModel(models.Model):
         verbose_name = 'دوره'
         verbose_name_plural = 'دوره‌ها'
 
+    teacher = models.ForeignKey(
+        to="teacher.TeacherModel", on_delete=models.PROTECT, null=True, blank=True)
     title = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     short_description = models.TextField(
