@@ -11,4 +11,5 @@ class TeacherType(DjangoObjectType):
     class Meta:
         model = TeacherModel
         interfaces = (relay.Node,)
+        filter_fields = ['categories']
         fields = "__all__"
