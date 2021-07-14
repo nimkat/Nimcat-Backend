@@ -10,6 +10,5 @@ from .models import (
 class TeacherType(DjangoObjectType):
     class Meta:
         model = TeacherModel
-        # filter_fields = "__all__"
         interfaces = (relay.Node,)
         fields = "__all__"
