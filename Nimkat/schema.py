@@ -7,11 +7,13 @@ import graphql_jwt
 
 import user.schema
 import course.schema
+import teacher.schema
 
 
 class Query(
         user.schema.Query,
         course.schema.Query,
+        teacher.schema.Query,
         graphene.ObjectType):
     pass
 
