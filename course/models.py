@@ -16,8 +16,9 @@ class CourseCategoryModel(models.Model):
     title = models.CharField(max_length=100, blank=True)
     short_description = models.TextField(
         blank=True, null=True, max_length=1000)
-    image = models.ImageField(
-        upload_to="course_category/", blank=True, null=True
+    image = models.FileField(
+        upload_to="course_category/", blank=True, null=True,
+        valid_extensions=['.svg', '.png']
     )
 
     def __str__(self):
