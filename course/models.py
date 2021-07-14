@@ -18,7 +18,6 @@ class CourseCategoryModel(models.Model):
         blank=True, null=True, max_length=1000)
     image = models.FileField(
         upload_to="course_category/", blank=True, null=True,
-        valid_extensions=['.svg', '.png']
     )
 
     def __str__(self):
