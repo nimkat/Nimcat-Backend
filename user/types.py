@@ -7,6 +7,13 @@ from .models import AchievementModel, ProfileModel, BoughtCoursesModel, Favourit
 
 
 class UserType(DjangoObjectType):
+
+    def resolve_avatar(self, info):
+        """Resolve product image absolute path"""
+        if self.avatar:
+            self.avatar = info.context.build_absolute_uri(self.avatar.url)
+        return self.avatar
+
     class Meta:
         model = get_user_model()
         filter_exclude = ["avatar"]
@@ -50,6 +57,13 @@ class ProfileConnection(relay.Connection):
 
 
 class AchivmentType(DjangoObjectType):
+
+    def resolve_image(self, info):
+        """Resolve product image absolute path"""
+        if self.image:
+            self.image = info.context.build_absolute_uri(self.image.url)
+        return self.image
+
     class Meta:
         model = AchievementModel
         interfaces = (relay.Node, )

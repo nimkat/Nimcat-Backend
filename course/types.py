@@ -44,6 +44,13 @@ class CourseType(DjangoObjectType):
 
 
 class CourseCategoryType(DjangoObjectType):
+
+    def resolve_image(self, info):
+        """Resolve product image absolute path"""
+        if self.image:
+            self.image = info.context.build_absolute_uri(self.image.url)
+        return self.image
+
     class Meta:
         model = CourseCategoryModel
         filter_fields = ['title']
