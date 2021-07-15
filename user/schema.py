@@ -11,7 +11,7 @@ from .graphene_permissions.permissions import AllowAuthenticated
 from .inputs import ProfileInputType
 from .models import ProfileModel
 from .types import (ProfileType,
-                    ProfileConnection)
+                    ProfileConnection, UserType)
 
 from course.types import CourseType
 # from .payment import send_payment_request
@@ -41,11 +41,7 @@ class AuthMutation(graphene.ObjectType):
 
 
 class MeUserQuery(MeQuery):
-    def resolve_avatar(self, info):
-        """Resolve product image absolute path"""
-        if self.avatar:
-            self.avatar = info.context.build_absolute_uri(self.avatar.url)
-        return self.avatar
+    me = graphene.Field(UserType)
 
 
 class Query(UserQuery, MeUserQuery, graphene.ObjectType):
