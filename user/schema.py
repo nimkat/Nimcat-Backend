@@ -40,7 +40,15 @@ class AuthMutation(graphene.ObjectType):
     revoke_token = mutations.RevokeToken.Field()
 
 
-class Query(UserQuery, MeQuery, graphene.ObjectType):
+class MeUserQuery(MeQuery):
+    def resolve_avatar(self, info):
+        """Resolve product image absolute path"""
+        if self.avatar:
+            self.avatar = info.context.build_absolute_uri(self.avatar.url)
+        return self.avatar
+
+
+class Query(UserQuery, MeUserQuery, graphene.ObjectType):
     profile = relay.Node.Field(ProfileType)
     all_profile = relay.ConnectionField(ProfileConnection)
 
