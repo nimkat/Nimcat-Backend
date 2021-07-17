@@ -106,7 +106,7 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
-        return self.email
+        return self.mobile_number
 
 
 class ProfileModel(models.Model):
