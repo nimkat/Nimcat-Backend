@@ -106,6 +106,8 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
+        if self.mobile_number == None:
+            return "MOBILE NUMBER NULL"
         return self.mobile_number
 
 
