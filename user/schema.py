@@ -11,7 +11,7 @@ from .graphene_permissions.permissions import AllowAuthenticated
 from .inputs import ProfileInputType
 from .models import ProfileModel
 from .types import (ProfileType,
-                    ProfileConnection)
+                    ProfileConnection, UserType)
 
 from course.types import CourseType
 # from .payment import send_payment_request
@@ -40,7 +40,11 @@ class AuthMutation(graphene.ObjectType):
     revoke_token = mutations.RevokeToken.Field()
 
 
-class Query(UserQuery, MeQuery, graphene.ObjectType):
+class MeUserQuery(MeQuery):
+    me = graphene.Field(UserType)
+
+
+class Query(UserQuery, MeUserQuery, graphene.ObjectType):
     profile = relay.Node.Field(ProfileType)
     all_profile = relay.ConnectionField(ProfileConnection)
 
