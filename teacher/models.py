@@ -9,8 +9,8 @@ class TeacherModel(models.Model):
 
     user = models.OneToOneField(
         to=get_user_model(), on_delete=models.CASCADE, primary_key=True)
-    name = models.CharField(max_length=100, blank=True)
-    en_name = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    en_name = models.CharField(max_length=100, blank=True, null=True,)
     title = models.CharField(max_length=200, blank=True)
     short_description = models.TextField(
         blank=True, null=True, max_length=1000)
