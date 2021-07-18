@@ -1,66 +1,77 @@
 import requests
 import os
+from melipayamak import Api
+
+# for sms.ir
+# def get_sms_provider_token():
+#     request_url = "http://RestfulSms.com/api/Token"
+
+#     request_body = {
+#         "UserApiKey": os.getenv("SMS_API_KEY"),
+#         "SecretKey": os.getenv("SMS_SECRET_KEY")
+#     }
+
+#     response = requests.post(url=request_url, data=request_body)
+
+#     return response.json()
 
 
-def get_sms_provider_token():
-    request_url = "http://RestfulSms.com/api/Token"
+# def get_sms_line(token):
+#     headers = {"x-sms-ir-secure-token": token}
 
-    request_body = {
-        "UserApiKey": os.getenv("SMS_API_KEY"),
-        "SecretKey": os.getenv("SMS_SECRET_KEY")
-    }
+#     request_url = "http://RestfulSms.com/api/SMSLine"
 
-    response = requests.post(url=request_url, data=request_body)
+#     response = requests.request(
+#         "GET", request_url, headers=headers)
 
-    return response.json()
+#     return response.json()
 
 
-def get_sms_line(token):
-    headers = {"x-sms-ir-secure-token": token}
+# def send_verifiction_code(code, mobileNumber):
 
-    request_url = "http://RestfulSms.com/api/SMSLine"
+#     token = get_sms_provider_token()
 
-    response = requests.request(
-        "GET", request_url, headers=headers)
+#     headers = {"x-sms-ir-secure-token": token}
 
-    return response.json()
+#     request_url = "http: // RestfulSms.com/api/VerificationCode"
 
+#     request_body = {
+#         "Code": code,
+#         "MobileNumber": mobileNumber
+#     }
 
-def send_verifiction_code(code, mobileNumber):
+#     response = requests.post(
+#         url=request_url, headers=headers, data=request_body)
 
-    token = get_sms_provider_token()
-
-    headers = {"x-sms-ir-secure-token": token}
-
-    request_url = "http: // RestfulSms.com/api/VerificationCode"
-
-    request_body = {
-        "Code": code,
-        "MobileNumber": mobileNumber
-    }
-
-    response = requests.post(
-        url=request_url, headers=headers, data=request_body)
-
-    return response.json()
+#     return response.json()
 
 
-def send_ultra_fast_message(templateID, mobileNumber, *args, **kwargs):
+# def send_ultra_fast_message(templateID, mobileNumber, *args, **kwargs):
 
-    token = get_sms_provider_token()
+#     token = get_sms_provider_token()
 
-    headers = {"x-sms-ir-secure-token": token}
+#     headers = {"x-sms-ir-secure-token": token}
 
-    request_url = "http: // RestfulSms.com/api/VerificationCode"
+#     request_url = "http: // RestfulSms.com/api/VerificationCode"
 
-    request_body = {
-        "TemplateId": templateID,
-        "Mobile": mobileNumber,
-        "ParameterArray": [{"Parameter": "Parameters" + key+1, "ParameterValue": value}
-                           for key, value in kwargs.items()]
-    }
+#     request_body = {
+#         "TemplateId": templateID,
+#         "Mobile": mobileNumber,
+#         "ParameterArray": [{"Parameter": "Parameters" + key+1, "ParameterValue": value}
+#                            for key, value in kwargs.items()]
+#     }
 
-    response = requests.post(
-        url=request_url, headers=headers, data=request_body)
+#     response = requests.post(
+#         url=request_url, headers=headers, data=request_body)
 
-    return response.json()
+#     return response.json()
+
+# for melipayamak.ir
+def send_activation_sms(code, mobile_number):
+    username = os.getenv("SMS_API_USER"),
+    password = os.getenv("SMS_API_PASSWORD"),
+    api = Api(username, password)
+    sms_rest = api.sms()
+    to = '09123456789'
+    sms_rest.send_by_base_number(text, to, bodyId)
+    return sms_rest.is_delivered(recId)
