@@ -72,7 +72,7 @@ def send_activation_sms(code, mobile_number):
     password = os.getenv("SMS_API_PASSWORD", '5107'),
     api = Api(username, password)
     sms_rest = api.sms()
-    to = '09123456789'
-    sended_sms = sms_rest.send_by_base_number("8585", to, 1)
+    to = mobile_number
+    sended_sms = sms_rest.send_by_base_number(code, to, "52842")
     print(sended_sms)
-    return sms_rest.is_delivered(sended_sms["recId"])
+    return sended_sms["RetStatus"]
