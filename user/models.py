@@ -89,7 +89,7 @@ class User(AbstractUser):
     verified = models.BooleanField(default=False)
     archived = models.BooleanField(default=False)
 
-    email = models.EmailField(_('email address'), unique=True, null=True)
+    email = models.EmailField(_('email address'), null=True, blank=True)
     avatar = models.ImageField(blank=True, upload_to='profiles/avatar')
 
     mobile_number_validator = UnicodeMobileNumberValidator()
