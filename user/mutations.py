@@ -1,3 +1,4 @@
+from graphql_auth.exceptions import GraphQLAuthError
 from user.models import SMSVerificationCodes
 import graphene
 from django.contrib.auth import get_user_model
@@ -8,7 +9,13 @@ import uuid
 from graphql_auth.models import UserStatus
 from graphql_auth.forms import RegisterForm
 from graphql_auth.types import ExpectedErrorType
-from common.util.sms import send_verifiction_code
+from common.util.sms import send_activation_sms
+from django.db import transaction
+from django.utils.translation import gettext as _
+
+
+class PhoneAlreadyInUse(GraphQLAuthError):
+    default_message = _("This phone is already in use.")
 
 
 class RegisterSMS(graphene.Mutation):
@@ -23,19 +30,27 @@ class RegisterSMS(graphene.Mutation):
         password2 = graphene.String(required=True)
 
     def mutate(self, info, mobile_number, password1, password2, **kwargs):
-        code = uuid.uuid1().int % 10000
-        f = RegisterForm(mobile_number, password1, password2)
-        if f.is_valid():
-            user = f.save()
-            UserStatus.objects.create(user=user)
-            send_sms = send_verifiction_code(
-                code=code, mobileNumber=mobile_number)
-            SMSVerificationCodes.objects.create(user=user, code=code)
+        try:
+            code = uuid.uuid1().int % 10000
+            f = RegisterForm(mobile_number, password1, password2)
+            with transaction.atomic():
+                if f.is_valid():
+                    user = f.save()
+                    UserStatus.objects.create(user=user)
+                    send_sms = send_activation_sms(
+                        code, mobile_number)
+                    SMSVerificationCodes.objects.create(user=user, code=code)
+                else:
+                    return RegisterSMS(success=False, errors=f.errors.get_json_data())
 
-        else:
-            return RegisterSMS(success=False, errors=f.errors.get_json_data())
+                return RegisterSMS(success=True)
 
-        return RegisterSMS(success=True)
+        except PhoneAlreadyInUse:
+            return RegisterSMS(
+                success=False,
+                errors={get_user_model().USERNAME_FIELD: _(
+                    'This phone is already in use.')},
+            )
 
 
 class VerifySMS(graphene.Mutation):
@@ -45,18 +60,20 @@ class VerifySMS(graphene.Mutation):
     errors = graphene.Field(ExpectedErrorType)
 
     class Input:
+        code = graphene.String(required=True)
         mobile_number = graphene.String(required=True)
-        password1 = graphene.String(required=True)
-        password2 = graphene.String(required=True)
 
-    def mutate(self, info, mobile_number, password1, password2, **kwargs):
-        code = uuid.uuid1().int % 10000
-        f = RegisterForm(mobile_number, password1, password2)
-        if f.is_valid():
-            user = f.save()
-            UserStatus.objects.create(user=user)
-            SMSVerificationCodes.objects.create(user=user, code=code)
+    def mutate(self, info, mobile_number, code, **kwargs):
+        user = get_user_model().objects.get(mobile_number=mobile_number)
+        if user == None:
+            return RegisterSMS(success=False, errors=_('User is invalid'))
         else:
-            return RegisterSMS(success=False, errors=f.errors.get_json_data())
+            saved_code = SMSVerificationCodes.objects.get(code=code, user=user)
+            if saved_code == None:
+                return RegisterSMS(success=False, errors=_('User not created, Register again'))
+            else:
+                saved_code.delete()
+                status = UserStatus.objects.get(user=user)
+                setattr(status, 'verified', True)
 
-        return RegisterSMS(success=True)
+        return VerifySMS(success=True)
