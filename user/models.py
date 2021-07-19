@@ -52,32 +52,32 @@ class UserManager(BaseUserManager):
 
     use_in_migrations = True
 
-    def _create_user(self, mobile_number, password, **extra_fields):
-        if not mobile_number:
+    def _create_user(self, username, password, **extra_fields):
+        if not username:
             raise ValueError('The given username must be set')
         # email = self.normalize_email(email)
-        mobile_number = self.normalize_mobile_number(mobile_number)
-        user = self.model(mobile_number=mobile_number, **extra_fields)
+        username = self.normalize_mobile_number(username)
+        user = self.model(username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, mobile_number, password=None, **extra_fields):
+    def create_user(self, username, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(mobile_number, password, **extra_fields)
+        return self._create_user(username, password, **extra_fields)
 
-    def create_superuser(self, mobile_number, password, **extra_fields):
+    def create_superuser(self, username, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
-        return self._create_user(mobile_number, password, **extra_fields)
+        return self._create_user(username, password, **extra_fields)
 
-    def normalize_mobile_number(self, mobile_number):
-        return mobile_number
+    def normalize_username(self, username):
+        return username
 
 
 class User(AbstractUser):
@@ -86,27 +86,32 @@ class User(AbstractUser):
         verbose_name = 'کاربر'
         verbose_name_plural = 'کاربران'
 
+    verified = models.BooleanField(default=False)
+    archived = models.BooleanField(default=False)
+
     email = models.EmailField(_('email address'), unique=True, null=True)
     avatar = models.ImageField(blank=True, upload_to='profiles/avatar')
 
     mobile_number_validator = UnicodeMobileNumberValidator()
-    mobile_number = models.CharField(max_length=50,
-                                     unique=True,
-                                     verbose_name=_('Mobile Number'),
-                                     validators=[mobile_number_validator],
-                                     error_messages={
-                                         'unique': _("A user with that mobile number already exists."),
-                                     },
-                                     null=True
-                                     )
+    username = models.CharField(max_length=50,
+                                unique=True,
+                                verbose_name=_('Mobile Number'),
+                                validators=[mobile_number_validator],
+                                error_messages={
+                                    'unique': _("A user with that mobile number already exists."),
+                                },
+                                null=True
+                                )
 
-    USERNAME_FIELD = 'mobile_number'
+    USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
     objects = UserManager()
 
     def __str__(self):
-        return self.email
+        if self.username == None:
+            return "MOBILE NUMBER NULL"
+        return self.username
 
 
 class ProfileModel(models.Model):
@@ -151,7 +156,10 @@ class BoughtCoursesModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-# class SMSVerificationCodes(models.Model):
-#     user = models.ForeignKey(
-#         to=User, on_delete=models.CASCADE)
-#     code = models.CharField(max_length=4, null=True)
+class SMSVerificationCodes(models.Model):
+    user = models.ForeignKey(
+        to=User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=4, null=True)
+
+    def __str__(self):
+        return self.user.username

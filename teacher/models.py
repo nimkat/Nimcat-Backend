@@ -20,4 +20,6 @@ class TeacherModel(models.Model):
         to="course.CourseCategoryModel", blank=True, related_name="teacher_in_category")
 
     def __str__(self):
-        return str(self.name)
+        if self.name == None:
+            return "ERROR-TEACHER NAME IS NULL"
+        return self.name

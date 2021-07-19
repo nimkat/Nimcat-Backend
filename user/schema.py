@@ -1,3 +1,4 @@
+from user.mutations import RegisterSMS, ResendSMS, VerifySMS
 from course.models import CourseModel
 import graphene
 from django.contrib.auth import get_user_model
@@ -95,6 +96,9 @@ class Mutation(AuthMutation, graphene.ObjectType):
     update_profile = UpdateProfile.Field()
     buy_course = UpdateProfile.Field()
     # social_auth = graphql_social_auth.relay.SocialAuth.Field()
+    register_sms = RegisterSMS.Field()
+    verify_sms = VerifySMS.Field()
+    resend_sms = ResendSMS.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
