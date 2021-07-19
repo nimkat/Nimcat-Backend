@@ -87,9 +87,10 @@ class CourseReviewModel(models.Model):
         verbose_name = 'نقد دوره‌'
         verbose_name_plural = 'نقد‌های دوره'
 
-    course = models.ForeignKey(to=CourseModel, on_delete=models.CASCADE)
+    course = models.ForeignKey(
+        to=CourseModel, on_delete=models.CASCADE, null=True, blank=True)
     author = models.ForeignKey(
-        get_user_model(), related_name="course_review", on_delete=models.CASCADE
+        get_user_model(), related_name="course_review", on_delete=models.CASCADE, null=True, blank=True
     )
     subject = models.CharField(max_length=50, blank=True)
     description = models.TextField()
@@ -113,8 +114,10 @@ class CourseReviewLikeModel(models.Model):
         UP = 1
         DOWN = -1
 
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    review = models.ForeignKey(CourseReviewModel, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
+    review = models.ForeignKey(
+        CourseReviewModel, on_delete=models.CASCADE, null=True, blank=True)
     value = models.IntegerField(choices=Value.choices)
 
     def create(self, *args, **kwargs):
@@ -128,10 +131,10 @@ class CourseReviewLikeModel(models.Model):
 
 class CourseLikeModel(models.Model):
     course = models.OneToOneField(
-        CourseModel, related_name="course_likes", on_delete=models.CASCADE
+        CourseModel, related_name="course_likes", on_delete=models.CASCADE, null=True, blank=True
     )
     users = models.ManyToManyField(
-        get_user_model(), related_name="user_course_likes"
+        get_user_model(), related_name="user_course_likes", null=True, blank=True
     )
 
     def __str__(self):
