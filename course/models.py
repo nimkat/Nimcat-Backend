@@ -25,6 +25,10 @@ class CourseCategoryModel(models.Model):
 
 
 class CourseLessonModel(models.Model):
+    class Meta:
+        verbose_name = 'درس‌'
+        verbose_name_plural = 'درس‌ها'
+
     title = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     # Todo: modify when update field.
@@ -35,8 +39,15 @@ class CourseLessonModel(models.Model):
     video = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(max_length=100, blank=True)
 
+    def __str__(self):
+        return str(self.title)
+
 
 class CourseSectionModel(models.Model):
+    class Meta:
+        verbose_name = 'سرفصل‌'
+        verbose_name_plural = 'سرفصل‌ها'
+
     title = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     short_description = models.TextField(
@@ -46,6 +57,9 @@ class CourseSectionModel(models.Model):
     published = models.BooleanField(default=True)
     video = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(max_length=100, blank=True)
+
+    def __str__(self):
+        return str(self.title)
 
 
 class CourseModel(models.Model):
