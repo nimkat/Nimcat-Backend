@@ -21,7 +21,7 @@ class CourseCategoryModel(models.Model):
     )
 
     def __str__(self):
-        return str(self.title)
+        return "{}--{}".format(self.pk, self.title)
 
 
 class CourseLessonModel(models.Model):
@@ -40,7 +40,7 @@ class CourseLessonModel(models.Model):
     slug = models.SlugField(max_length=100, blank=True)
 
     def __str__(self):
-        return str(self.title)
+        return "{}--{}".format(self.pk, self.title)
 
 
 class CourseSectionModel(models.Model):
@@ -59,7 +59,7 @@ class CourseSectionModel(models.Model):
     slug = models.SlugField(max_length=100, blank=True)
 
     def __str__(self):
-        return str(self.title)
+        return "{}--{}".format(self.pk, self.title)
 
 
 class CourseModel(models.Model):
