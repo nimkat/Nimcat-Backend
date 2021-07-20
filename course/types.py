@@ -29,7 +29,7 @@ class CourseType(DjangoObjectType):
         return self.image
 
     def resolve_video(self, info):
-        """Resolve vodeo url sequre path"""
+        """Resolve vodeo url secure path"""
         if self.video:
             self.video = get_secure_video_link(info.context, self.video)
         return self.video
@@ -59,6 +59,12 @@ class CourseCategoryType(DjangoObjectType):
 
 
 class CourseSectionType(DjangoObjectType):
+    def resolve_video(self, info):
+        """Resolve vodeo url secure path"""
+        if self.video:
+            self.video = get_secure_video_link(info.context, self.video)
+        return self.video
+
     class Meta:
         model = CourseSectionModel
         filter_fields = "__all__"
@@ -67,6 +73,12 @@ class CourseSectionType(DjangoObjectType):
 
 
 class CourseLessonType(DjangoObjectType):
+    def resolve_video(self, info):
+        """Resolve vodeo url sequre path"""
+        if self.video:
+            self.video = get_secure_video_link(info.context, self.video)
+        return self.video
+
     class Meta:
         model = CourseLessonModel
         filter_fields = "__all__"
