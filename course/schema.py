@@ -4,6 +4,7 @@ from graphene import relay
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_relay import from_global_id
 from django.utils.translation import gettext as _
+from graphql import GraphQLError
 
 
 from .models import (
@@ -23,6 +24,7 @@ from .types import (
     CourseReviewType,
     CourseSectionType,
     CourseType,
+    SecureCourseType
 )
 
 from user.models import BoughtCoursesModel
@@ -38,7 +40,7 @@ class Query(graphene.AbstractType):
     course_likes = relay.Node.Field(CourseLikeType)
     all_course_likes = DjangoFilterConnectionField(CourseLikeType)
 
-    secure_course = relay.Node.Field(CourseType)
+    secure_course = graphene.Field(CourseType, id=graphene.String())
     my_courses = DjangoFilterConnectionField(CourseType)
 
     course_review = relay.Node.Field(CourseReviewType)
@@ -56,15 +58,17 @@ class Query(graphene.AbstractType):
     def resolve_course_category(self, info):
         return CourseCategoryModel.objects.all()
 
-    def resolve_secure_course(self, info, id):
+    def resolve_secure_course(cls, info, id):
         user = info.context.user
         if user.is_authenticated:
-            print(id)
             course_id = from_global_id(id)[1]
             bought_courses = BoughtCoursesModel.objects.filter(
-                user=user).values("course")
-            print(bought_courses)
-        return _("Not Authenticated")
+                user=user, course__id=course_id)
+            if bought_courses:
+                return CourseModel.objects.get(pk=course_id)
+            else:
+                return GraphQLError(_("Not Bought"))
+        return GraphQLError(_("Not Authenticated"))
 
     def resolve_my_courses(self, info):
         user = info.context.user
