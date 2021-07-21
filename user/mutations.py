@@ -1,5 +1,6 @@
+from course.models import CourseLessonModel, CourseModel
 from graphql_auth.exceptions import GraphQLAuthError
-from user.models import SMSVerificationCodes
+from user.models import BoughtCoursesModel, SMSVerificationCodes
 import graphene
 from django.contrib.auth import get_user_model
 from graphene import relay
@@ -102,3 +103,28 @@ class ResendSMS(graphene.Mutation):
             SMSVerificationCodes.objects.create(user=user, code=code)
 
         return ResendSMS(success=True)
+
+
+class CompleteLesson(graphene.Mutation):
+    """check course as completed"""
+
+    success = graphene.Boolean()
+    complete = graphene.Boolean()
+
+    class Arguments:
+        lesson_id = graphene.String(required=True)
+        course_id = graphene.String(required=True)
+
+    @classmethod
+    def mutate(cls, root, info, lesson_id, course_id):
+        user = info.context.user
+        lesson_pk = from_global_id(lesson_id)[1]
+        course_pk = from_global_id(course_id)[1]
+        print(lesson_id, course_id)
+        course = CourseModel.objects.get(pk=course_pk)
+        lesson = CourseLessonModel.objects.get(pk=lesson_pk)
+        bought_course = BoughtCoursesModel.objects.get(
+            user=user, course=course)
+
+        bought_course.complete_lessons.add(lesson)
+        return CompleteLesson(success=True, complete=True)
