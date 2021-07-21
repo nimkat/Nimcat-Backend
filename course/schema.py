@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from graphene import relay
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_relay import from_global_id
+from django.utils.translation import gettext as _
 
 
 from .models import (
@@ -37,7 +38,7 @@ class Query(graphene.AbstractType):
     course_likes = relay.Node.Field(CourseLikeType)
     all_course_likes = DjangoFilterConnectionField(CourseLikeType)
 
-    # my_courses = relay.Node.Field(CourseType)
+    secure_course = relay.Node.Field(CourseType)
     my_courses = DjangoFilterConnectionField(CourseType)
 
     course_review = relay.Node.Field(CourseReviewType)
@@ -54,6 +55,16 @@ class Query(graphene.AbstractType):
 
     def resolve_course_category(self, info):
         return CourseCategoryModel.objects.all()
+
+    def resolve_secure_course(self, info, id):
+        user = info.context.user
+        if user.is_authenticated:
+            print(id)
+            course_id = from_global_id(id)[1]
+            bought_courses = BoughtCoursesModel.objects.filter(
+                user=user).values("course")
+            print(bought_courses)
+        return _("Not Authenticated")
 
     def resolve_my_courses(self, info):
         user = info.context.user

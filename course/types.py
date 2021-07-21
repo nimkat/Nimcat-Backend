@@ -17,11 +17,6 @@ from common.util.Video import get_secure_video_link
 
 class CourseType(DjangoObjectType):
 
-    # To have parse json field instead of string json field.
-    costs = GenericScalar()
-    check_list = GenericScalar()
-    todo_list = GenericScalar()
-
     def resolve_image(self, info):
         """Resolve product image absolute path"""
         if self.image:
