@@ -37,8 +37,8 @@ class Query(graphene.AbstractType):
     course_likes = relay.Node.Field(CourseLikeType)
     all_course_likes = DjangoFilterConnectionField(CourseLikeType)
 
-    my_courses = relay.Node.Field(CourseType)
-    all_my_courses = DjangoFilterConnectionField(CourseType)
+    # my_courses = relay.Node.Field(CourseType)
+    my_courses = DjangoFilterConnectionField(CourseType)
 
     course_review = relay.Node.Field(CourseReviewType)
     all_course_review = DjangoFilterConnectionField(CourseReviewType)
@@ -98,7 +98,7 @@ class UpdateCourseReview(graphene.Mutation):
 
     def mutate(self, info, course_review_id, **kwargs):
         course_review = CourseReviewModel.objects.get(
-            pk=(from_global_id(trip_review_id)[1])
+            pk=(from_global_id(course_review_id)[1])
         )
         for key, value in kwargs.items():
             setattr(course_review, key, value)
@@ -130,11 +130,11 @@ class CreateCourseLike(graphene.Mutation):
     like = graphene.Boolean()
 
     @staticmethod
-    def mutate(root, info, courseid):
+    def mutate(root, info, course_id):
         user = info.context.user
         course_like = CourseLikeModel.objects.filter(
-            course=from_global_id(trip_id)[1])
-        course = CourseModel.objects.get(pk=from_global_id(trip_id)[1])
+            course=from_global_id(course_id)[1])
+        course = CourseModel.objects.get(pk=from_global_id(course_id)[1])
         if not course_like:
             CourseLikeModel.like(course=course, user=user)
             like = True
