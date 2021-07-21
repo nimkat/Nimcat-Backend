@@ -37,8 +37,8 @@ class Query(graphene.AbstractType):
     course_likes = relay.Node.Field(CourseLikeType)
     all_course_likes = DjangoFilterConnectionField(CourseLikeType)
 
-    my_courses = relay.Node.Field(CourseType)
-    all_my_courses = DjangoFilterConnectionField(CourseType)
+    # my_courses = relay.Node.Field(CourseType)
+    my_courses = DjangoFilterConnectionField(CourseType)
 
     course_review = relay.Node.Field(CourseReviewType)
     all_course_review = DjangoFilterConnectionField(CourseReviewType)
