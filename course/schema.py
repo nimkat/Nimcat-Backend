@@ -72,12 +72,14 @@ class Query(graphene.AbstractType):
 
     def resolve_my_courses(self, info):
         user = info.context.user
-        bought_courses = BoughtCoursesModel.objects.filter(
-            user=user).values("course")
-        courses = CourseModel.objects.filter(pk__in=bought_courses).order_by(
-            "-created_at"
-        )
-        return courses
+        if user.is_authenticated:
+            bought_courses = BoughtCoursesModel.objects.filter(
+                user=user).values("course")
+            courses = CourseModel.objects.filter(pk__in=bought_courses).order_by(
+                "-created_at"
+            )
+            return courses
+        return GraphQLError(_("Not Authenticated"))
 
 
 class CreateCourseReview(relay.ClientIDMutation):
