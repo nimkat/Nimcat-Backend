@@ -60,7 +60,7 @@ AUTH_USER_MODEL = 'user.User'
 
 
 MIDDLEWARE = [
-    'user.middleware.ForceLangMiddleware',
+    'common.middleware.ForceLangMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
