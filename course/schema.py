@@ -70,7 +70,7 @@ class Query(graphene.AbstractType):
                 return GraphQLError(_("Not Bought"))
         return GraphQLError(_("Not Authenticated"))
 
-    def resolve_my_courses(self, info):
+    def resolve_my_courses(cls, info):
         user = info.context.user
         if user.is_authenticated:
             bought_courses = BoughtCoursesModel.objects.filter(
