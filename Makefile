@@ -63,4 +63,4 @@ run: ## Run the Django server
 start: install migrate run ## Install requirements, apply migrations, then start development server
 
 make_locale_messages: 
-	django-admin makemessages -l fa_IR   
+	django-admin makemessages -l fa_IR  -i $(VENV) 
