@@ -40,9 +40,6 @@ class Query(graphene.AbstractType):
     course_likes = relay.Node.Field(CourseLikeType)
     all_course_likes = DjangoFilterConnectionField(CourseLikeType)
 
-    secure_course = graphene.Field(CourseType, id=graphene.String())
-    my_courses = DjangoFilterConnectionField(CourseType)
-
     course_review = relay.Node.Field(CourseReviewType)
     all_course_review = DjangoFilterConnectionField(CourseReviewType)
 
@@ -57,29 +54,6 @@ class Query(graphene.AbstractType):
 
     def resolve_course_category(self, info):
         return CourseCategoryModel.objects.all()
-
-    def resolve_secure_course(cls, info, id):
-        user = info.context.user
-        if user.is_authenticated:
-            course_id = from_global_id(id)[1]
-            bought_courses = BoughtCoursesModel.objects.filter(
-                user=user, course__id=course_id)
-            if bought_courses:
-                return CourseModel.objects.get(pk=course_id)
-            else:
-                return GraphQLError(_("Not Bought"))
-        return GraphQLError(_("Not Authenticated"))
-
-    def resolve_my_courses(cls, info):
-        user = info.context.user
-        if user.is_authenticated:
-            bought_courses = BoughtCoursesModel.objects.filter(
-                user=user).values("course")
-            courses = CourseModel.objects.filter(pk__in=bought_courses).order_by(
-                "-created_at"
-            )
-            return courses
-        return GraphQLError(_("Not Authenticated"))
 
 
 class CreateCourseReview(relay.ClientIDMutation):

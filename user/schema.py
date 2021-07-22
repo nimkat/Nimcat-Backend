@@ -8,10 +8,13 @@ from graphql_auth import mutations
 from graphql_auth.schema import UserQuery, MeQuery
 from graphql_relay import from_global_id
 
+from django.utils.translation import gettext as _
+from graphql import GraphQLError
+
 from .graphene_permissions.mixins import AuthUserMutation
 from .graphene_permissions.permissions import AllowAuthenticated
 from .inputs import ProfileInputType
-from .models import ProfileModel
+from .models import BoughtCoursesModel, ProfileModel
 from .types import (BoughtCoursesType, ProfileType,
                     ProfileConnection, UserType)
 
@@ -52,6 +55,30 @@ class Query(UserQuery, MeUserQuery, graphene.ObjectType):
 
     bought_course = relay.Node.Field(BoughtCoursesType)
     all_bought_courses = DjangoFilterConnectionField(BoughtCoursesType)
+
+    secure_bougth_course = graphene.Field(
+        BoughtCoursesType, id=graphene.String())
+    my_bought_courses = DjangoFilterConnectionField(BoughtCoursesType)
+
+    def resolve_secure_bougth_course(cls, info, id):
+        user = info.context.user
+        if user.is_authenticated:
+            bought_courses_id = from_global_id(id)[1]
+            bought_course = BoughtCoursesModel.objects.get(
+                pk=bought_courses_id)
+            if bought_course.user == user:
+                return bought_course
+            else:
+                return GraphQLError(_("Not Bought"))
+        return GraphQLError(_("Not Authenticated"))
+
+    def resolve_my_bought_courses(cls, info):
+        user = info.context.user
+        if user.is_authenticated:
+            bought_courses = BoughtCoursesModel.objects.filter(
+                user=user)
+            return bought_courses
+        return GraphQLError(_("Not Authenticated"))
 
 
 class UpdateProfile(relay.ClientIDMutation):
