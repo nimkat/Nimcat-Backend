@@ -1,3 +1,4 @@
+from graphene_django.filter.fields import DjangoFilterConnectionField
 from user.mutations import RegisterSMS, ResendSMS, VerifySMS, CompleteLesson
 from course.models import CourseModel
 import graphene
@@ -11,7 +12,7 @@ from .graphene_permissions.mixins import AuthUserMutation
 from .graphene_permissions.permissions import AllowAuthenticated
 from .inputs import ProfileInputType
 from .models import ProfileModel
-from .types import (ProfileType,
+from .types import (BoughtCoursesType, ProfileType,
                     ProfileConnection, UserType)
 
 from course.types import CourseType
@@ -48,6 +49,9 @@ class MeUserQuery(MeQuery):
 class Query(UserQuery, MeUserQuery, graphene.ObjectType):
     profile = relay.Node.Field(ProfileType)
     all_profile = relay.ConnectionField(ProfileConnection)
+
+    bought_course = relay.Node.Field(BoughtCoursesType)
+    all_bought_courses = DjangoFilterConnectionField(BoughtCoursesType)
 
 
 class UpdateProfile(relay.ClientIDMutation):
