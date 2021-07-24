@@ -113,18 +113,45 @@ class CompleteLesson(graphene.Mutation):
 
     class Arguments:
         lesson_id = graphene.String(required=True)
-        course_id = graphene.String(required=True)
+        bought_course_id = graphene.String(required=True)
 
     @classmethod
-    def mutate(cls, root, info, lesson_id, course_id):
+    def mutate(cls, root, info, lesson_id, bought_course_id):
         user = info.context.user
         lesson_pk = from_global_id(lesson_id)[1]
-        course_pk = from_global_id(course_id)[1]
-        print(lesson_id, course_id)
-        course = CourseModel.objects.get(pk=course_pk)
-        lesson = CourseLessonModel.objects.get(pk=lesson_pk)
-        bought_course = BoughtCoursesModel.objects.get(
-            user=user, course=course)
+        bought_course_pk = from_global_id(bought_course_id)[1]
 
-        bought_course.complete_lessons.add(lesson)
+        lesson = CourseLessonModel.objects.get(pk=lesson_pk)
+        bought_course = BoughtCoursesModel.objects.get(pk=bought_course_pk)
+
+        if lesson in bought_course.complete_lessons.all():
+            return CompleteLesson(success=True, complete=True)
+        else:
+            bought_course.complete_lessons.add(lesson)
+
         return CompleteLesson(success=True, complete=True)
+
+
+class UndoCompleteLesson(graphene.Mutation):
+    """uncheck course complete status"""
+
+    success = graphene.Boolean()
+    complete = graphene.Boolean()
+
+    class Arguments:
+        lesson_id = graphene.String(required=True)
+        bought_course_id = graphene.String(required=True)
+
+    @classmethod
+    def mutate(cls, root, info, lesson_id, bought_course_id):
+        user = info.context.user
+        lesson_pk = from_global_id(lesson_id)[1]
+        bought_course_pk = from_global_id(bought_course_id)[1]
+        lesson = CourseLessonModel.objects.get(pk=lesson_pk)
+        bought_course = BoughtCoursesModel.objects.get(pk=bought_course_pk)
+
+        if lesson in bought_course.complete_lessons.all():
+            bought_course.complete_lessons.remove(lesson)
+            return UndoCompleteLesson(success=True, complete=False)
+
+        return UndoCompleteLesson(success=True, complete=False)

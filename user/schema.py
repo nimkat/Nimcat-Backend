@@ -1,5 +1,5 @@
 from graphene_django.filter.fields import DjangoFilterConnectionField
-from user.mutations import RegisterSMS, ResendSMS, VerifySMS, CompleteLesson
+from user.mutations import RegisterSMS, ResendSMS, UndoCompleteLesson, VerifySMS, CompleteLesson
 from course.models import CourseModel
 import graphene
 from django.contrib.auth import get_user_model
@@ -67,7 +67,10 @@ class Query(UserQuery, MeUserQuery, graphene.ObjectType):
             bought_course = BoughtCoursesModel.objects.get(
                 pk=bought_courses_id)
             if bought_course.user == user:
-                return bought_course
+                if bought_course.payment_status == True:
+                    return bought_course
+                else:
+                    return GraphQLError(_("َNot Payed"))
             else:
                 return GraphQLError(_("Not Bought"))
         return GraphQLError(_("Not Authenticated"))
@@ -131,6 +134,7 @@ class Mutation(AuthMutation, graphene.ObjectType):
     verify_sms = VerifySMS.Field()
     resend_sms = ResendSMS.Field()
     complete_lesson = CompleteLesson.Field()
+    undo_complete_lesson = UndoCompleteLesson.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

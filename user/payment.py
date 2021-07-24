@@ -9,6 +9,8 @@
 # client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
 # amount = 1000  # Toman / Required
 # description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید"  # Required
+
+# AdditionalData for get payment
 # email = 'email@example.com'  # Optional
 # mobile = '09123456789'  # Optional
 # # Important: need to edit for realy server.
@@ -16,7 +18,7 @@
 
 
 # def send_payment_request(amount):
-#     result = client.service.PaymentRequest(
+#     result = client.service.PaymentRequestWithExtra(
 #         MERCHANT, amount, description, email, mobile, CallbackURL)
 #     if result.Status == 100:
 #         return 'https://www.zarinpal.com/pg/StartPay/' + str(result.Authority)
