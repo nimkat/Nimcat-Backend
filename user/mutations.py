@@ -12,6 +12,8 @@ from graphql_auth.types import ExpectedErrorType
 from common.util.sms import send_activation_sms
 from django.db import transaction
 from django.utils.translation import gettext as _
+import random
+from django.contrib.auth.forms import SetPasswordForm
 
 
 class PhoneAlreadyInUse(GraphQLAuthError):
@@ -32,7 +34,7 @@ class RegisterSMS(graphene.Mutation):
     @classmethod
     def mutate(cls, root, info, **kwargs):
         try:
-            code = uuid.uuid1().int % 10000
+            code = random.randrange(1000, 9999, 4)
             f = RegisterForm(kwargs)
             with transaction.atomic():
                 if f.is_valid():
@@ -96,13 +98,75 @@ class ResendSMS(graphene.Mutation):
         if user == None:
             return ResendSMS(success=False, errors=_('User is invalid, register first'))
         else:
-            code = uuid.uuid1().int % 10000
+            code = random.randrange(1000, 9999, 4)
             SMSVerificationCodes.objects.filter(user=user).delete()
             send_sms = send_activation_sms(
                 code, kwargs.get(get_user_model().USERNAME_FIELD))
             SMSVerificationCodes.objects.create(user=user, code=code)
 
         return ResendSMS(success=True)
+
+
+class ForgotPasswordSMS(graphene.Mutation):
+    """send forgotten passworld sms verification"""
+
+    success = graphene.Boolean()
+    errors = graphene.Field(ExpectedErrorType)
+
+    class Arguments:
+        username = graphene.String(required=True)
+
+    @classmethod
+    def mutate(cls, root, info, **kwargs):
+
+        user = get_user_model().objects.get(
+            username=kwargs.get(get_user_model().USERNAME_FIELD))
+        if user == None:
+            return ForgotPasswordSMS(success=False, errors=_('User is invalid, register first'))
+        else:
+            code = random.randrange(1000, 9999, 4)
+            SMSVerificationCodes.objects.filter(user=user).delete()
+            send_sms = send_activation_sms(
+                code, kwargs.get(get_user_model().USERNAME_FIELD))
+            SMSVerificationCodes.objects.create(user=user, code=code)
+
+        return ForgotPasswordSMS(success=True)
+
+
+class ResetPasswordSMS(graphene.Mutation):
+    """reset password"""
+
+    success = graphene.Boolean()
+    errors = graphene.Field(ExpectedErrorType)
+
+    class Arguments:
+        username = graphene.String(required=True)
+        code = graphene.String(required=True)
+        new_password1 = graphene.String(required=True)
+        new_password2 = graphene.String(required=True)
+
+    @classmethod
+    def mutate(cls, root, info, **kwargs):
+        code = kwargs.get("code")
+        new_password1 = kwargs.get("new_password1")
+        new_password2 = kwargs.get("new_password2")
+        user = get_user_model().objects.get(
+            username=kwargs.get(get_user_model().USERNAME_FIELD))
+        if user == None:
+            return ResetPasswordSMS(success=False, errors=_('User is invalid, register first'))
+        else:
+            saved_code = SMSVerificationCodes.objects.get(code=code, user=user)
+            if saved_code == None:
+                return ResetPasswordSMS(success=False, errors=_('Code is not true'))
+            else:
+                form = SetPasswordForm(user, kwargs)
+                if form.is_valid():
+                    user = form.save()
+                    saved_code.delete()
+                else:
+                    return ResetPasswordSMS(success=False, errors=form.errors.get_json_data())
+
+        return ResetPasswordSMS(success=True)
 
 
 class CompleteLesson(graphene.Mutation):

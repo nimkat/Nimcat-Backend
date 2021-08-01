@@ -94,15 +94,7 @@ class User(AbstractUser):
     avatar = models.ImageField(blank=True, upload_to='profiles/avatar')
 
     mobile_number_validator = UnicodeMobileNumberValidator()
-    username = models.CharField(max_length=50,
-                                unique=True,
-                                verbose_name=_('Mobile Number'),
-                                validators=[mobile_number_validator],
-                                error_messages={
-                                    'unique': _("A user with that mobile number already exists."),
-                                },
-                                null=True
-                                )
+    
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -153,11 +145,13 @@ class BoughtCoursesModel(models.Model):
     course = models.ForeignKey(
         "course.CourseModel", on_delete=models.CASCADE)
     payment_status = models.BooleanField(default=False)
+    
     ref_id = models.CharField(max_length=100, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     complete_lessons = models.ManyToManyField(
         to="course.CourseLessonModel", related_name="users_completed", blank=True)
-
+    def __str__(self):
+        return self.user.username
 
 class SMSVerificationCodes(models.Model):
     user = models.ForeignKey(
