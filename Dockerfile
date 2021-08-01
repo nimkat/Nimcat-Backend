@@ -4,7 +4,7 @@ FROM python:3
 ENV PYTHONUNBUFFERED 1
 # RUN mkdir /db
 #RUN chown app:app -R /db
-
+ENV PYTHONPATH="$PYTHONPATH"
 RUN mkdir /code
 WORKDIR /code
 ADD requirements.txt /code/
