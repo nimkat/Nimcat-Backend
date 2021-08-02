@@ -1,0 +1,21 @@
+- name: Docker Publish
+  # You may pin to the exact commit or the version.
+  # uses: manusa/actions-publish-docker@db938e45d2a3487e0eab9646e83550f554c17af3
+  uses: mohammadmasoudie/nimcat-django:latest
+  with:
+    # Name of the Docker image
+    name: 
+    # Tag for the Docker image
+    tag: # optional
+    # Script body to compute tag name for the Docker image, has context as the main function argument
+    tag script: # optional
+    # Username for Docker registry
+    username: mohammadmaso
+    # Password for Docker registry
+    password: the.miiim48836083
+    # Registry URL
+    registry: # optional
+    # Don't skip pull requests
+    include pull requests: # optional
+    # Path to Dockerfile
+    dockerfile path: # optional
