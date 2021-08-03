@@ -1,3 +1,4 @@
+import os
 import socket
 import requests
 
@@ -35,7 +36,7 @@ def get_secure_video_link(request, video_id):
 
     params = {'secure_ip': request_id, }
     headers = {
-        'Authorization': 'Apikey 5bd1c41d-c756-4cdd-b20f-78359663792d'
+        'Authorization': os.getenv("VOD_API_KEY"),
     }
 
     response = requests.request(

@@ -26,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'dejm1_kfe!oz-5_^*229-ew*fa55cmc%yq(e4f)q%kgebxy2pw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG")
 
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["api.nimcatacademy.ir", '0.0.0.0']
 
 
 # Application definition

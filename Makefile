@@ -53,6 +53,14 @@ start-docker:
 	docker-compose run web python manage.py migrate  
 	docker-compose up --build
 
+
+docker_build: 
+	docker build -t nimcat-django -f Dockerfile .
+docker_tag: 
+	docker tag nimcat-django  dockerregistry-nimcat.apps.ir-thr-at1.arvan.run/nimcat-django
+docker_push:
+	docker push   dockerregistry-nimcat.apps.ir-thr-at1.arvan.run/nimcat-django:latest
+
 add-env:
 	cat .env | export
 

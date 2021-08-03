@@ -68,8 +68,8 @@ from melipayamak import Api
 
 # for melipayamak.ir
 def send_activation_sms(code, mobile_number):
-    username = os.getenv("SMS_API_USER", '09337723381'),
-    password = os.getenv("SMS_API_PASSWORD", '5107'),
+    username = os.getenv("SMS_API_USER"),
+    password = os.getenv("SMS_API_PASSWORD"),
     api = Api(username, password)
     sms_rest = api.sms()
     to = mobile_number
