@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from ckeditor_uploader.fields import RichTextUploadingField
 
 LANGUAGE = [
     ('fa', 'فارسی'),
@@ -35,6 +36,8 @@ class CourseLessonModel(models.Model):
     modify_at = models.DateTimeField(auto_now=True)
     short_description = models.TextField(
         blank=True, null=True, max_length=1000)
+    content = RichTextUploadingField(blank=True, null=True)
+
     published = models.BooleanField(default=True)
     video = models.CharField(max_length=100, blank=True)
     slug = models.SlugField(max_length=100, blank=True)

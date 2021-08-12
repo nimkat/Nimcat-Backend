@@ -73,6 +73,6 @@ def send_activation_sms(code, mobile_number):
     api = Api(username, password)
     sms_rest = api.sms()
     to = mobile_number
-    sended_sms = sms_rest.send_by_base_number(code, to, "52842")
+    sended_sms = sms_rest.send_by_base_number(code, to, "55146")
     print(sended_sms)
     return sended_sms["RetStatus"]

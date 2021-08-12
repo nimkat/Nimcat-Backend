@@ -26,10 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'dejm1_kfe!oz-5_^*229-ew*fa55cmc%yq(e4f)q%kgebxy2pw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 
-
-ALLOWED_HOSTS = ["api.nimcatacademy.ir", '0.0.0.0']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -48,7 +47,8 @@ INSTALLED_APPS = [
     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'graphql_auth',
     'django_filters',
-
+    'ckeditor',
+    'ckeditor_uploader',
 
     'user',
     'teacher',
@@ -210,12 +210,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+if DEBUG == True:
+    STATIC_URL = "/static/"
+    STATIC_ROOT = BASE_DIR / "static"
+else:
+    STATICFILES_STORAGE = 'Nimkat.custom_storage.StaticStorage'
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static"
-
-MEDIA_ROOT = BASE_DIR / "media"
-MEDIA_URL = "media/"
+# MEDIA_ROOT = BASE_DIR / "media"
+# MEDIA_URL = "media/"
 
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -236,5 +238,13 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-django_heroku.settings(locals())
+
+CKEDITOR_UPLOAD_PATH = "editors_uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+
+    },
+}
