@@ -91,6 +91,8 @@ class CourseModel(models.Model):
     sections = models.ManyToManyField(
         to=CourseSectionModel, related_name="course_of_section", blank=True)
     published = models.BooleanField(default=True)
+    under_construction = models.BooleanField(default=True)
+
     slug = models.SlugField(max_length=100, blank=True)
 
     video = models.CharField(max_length=100, blank=True)
