@@ -29,12 +29,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('download_schema', csrf_exempt(DownloadGraphQlSchema.as_view())),
     path('logout', LogoutView.as_view()),
-    path('api/', FileUploadGraphQLView.as_view(graphiql=False)),
+    path('api/', csrf_exempt(FileUploadGraphQLView.as_view(graphiql=False))),
     # path('verify_payment', verify_payment, name='verify_payment'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 
 ]
 
 if settings.DEBUG:
-    urlpatterns.append(path('graphql/', GraphQLView.as_view(graphiql=True)),
+    urlpatterns.append(path('graphql/', csrf_exempt(GraphQLView.as_view(graphiql=True))),
                        )
